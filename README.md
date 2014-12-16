@@ -1,4 +1,4 @@
 lua_editor
 ==========
 
-HTML part of the ingame GMod lua editor
+This is the lua/derma control part of the project
