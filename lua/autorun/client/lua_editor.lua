@@ -55,6 +55,11 @@ function PANEL:SetupHTML()
 	self.HTML = vgui.Create("DHTML", self)
 	self.HTML:Dock(FILL)
 
+	self.HTML.Paint = function(_, w,h)  
+		surface.SetDrawColor(39,40,34)
+		surface.DrawRect(w,h,0,0)
+	end
+
 	self:AddJavascriptCallback("OnReady")
 	self:AddJavascriptCallback("OnCode")
 	self:AddJavascriptCallback("OnLog")
@@ -84,6 +89,7 @@ function PANEL:AddJavascriptCallback(name)
 end
 
 function PANEL:OnReady() 
+	self.HTML.Paint = function() end
 	self.Ready = true
 	if self.CodeSetBeforeReady then
 		self:SetCode(self:JavascriptSafe(self.Code))
@@ -112,19 +118,19 @@ function PANEL:SetMode(name)
 end
 
 function PANEL:SetCode(code)
-	if not content then return end
+	if not code then return end
 	if not self.Ready then self.CodeSetBeforeReady = true end
 	self.Code = code
-	self.HTML:CallJS('SetContent("' .. code .. '");')
+	self:CallJS('SetContent("' .. self:JavascriptSafe(code) .. '");')
 end
 
 function PANEL:GetCode() return self.Code end
 
 function PANEL:SetGutterError(errline, errstr) self:CallJS("SetErr('"..errline.."', '"..self:JavascriptSafe(errstr).."')") end
 function PANEL:GotoLine(num) self:CallJS("GotoLine('"..num.."')") end
-function PANEL:ClearGutter() self.HTML:Call("ClearErr()") end
-function PANEL:ShowMenu() self.HTML:Call("ShowMenu()") end
-function PANEL:ShowBinds() self.HTML:Call("ShowBinds()") end
+function PANEL:ClearGutter() self:CallJS("ClearErr()") end
+function PANEL:ShowMenu() self:CallJS("ShowMenu()") end
+function PANEL:ShowBinds() self:CallJS("ShowBinds()") end
 function PANEL:SetFontSize(size) self:CallJS("SetFontSize('"..size.."')") end
 
 function PANEL:OnCodeChanged(code) end
